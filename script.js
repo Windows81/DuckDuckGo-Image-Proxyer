@@ -12,10 +12,13 @@
 (function() {
     'use strict';
 
+    const shouldReplace = (url) => {
+        return /^.*:\/\/.*\/.*(png|jpg|jpeg)/i.test(url);
+    }
+
     const replaceImages = (mutationsList, observer) => {
 
         // Loops through each mutation record.
-        console.log(mutationsList);
         for (const mutation of mutationsList) {
 
             if (mutation.type !== 'childList') continue;
@@ -26,6 +29,7 @@
                 if (img.nodeType !== Node.ELEMENT_NODE) return;
                 if (img.tagName !== "IMG") return;
                 if (!img.dataset.originalSrc) img.dataset.originalSrc = img.src;
+                if (!shouldReplace(img.dataset.originalSrc)) return;
                 let replacementUrl = 'https://external-content.duckduckgo.com/iu/?w=200&u=' + encodeURIComponent(img.dataset.originalSrc);
                 img.src = replacementUrl;
                 img.srcset = "";
